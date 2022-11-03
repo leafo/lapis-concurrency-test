@@ -13,9 +13,17 @@ end
 
 local db = require "lapis.db"
 
-app:get("/", function(self)
+app:get("index", "/", function(self)
   return self:html(function()
     h1 "Concurrent request test"
+    ul(function()
+      li(function()
+        a({href = self:url_for("index", nil, { delay_type = "query" })}, "Delay Query")
+      end)
+      li(function()
+        a({href = self:url_for("index", nil, { delay_type = "sleep" })}, "Delay Sleep")
+      end)
+    end)
 
     div({
       style = "display: flex; gap: 20px; flex-wrap: wrap;"
