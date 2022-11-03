@@ -26,7 +26,7 @@ app:get("/", function(self)
           height = 200,
           src = self:url_for("sub_request", nil, {
             request_number = i,
-            delay_type = "sleep",
+            delay_type = self.params.delay_type or "query",
           })
         }
       end
@@ -35,6 +35,7 @@ app:get("/", function(self)
 end)
 
 app:get("sub_request", "/sub-req", function(self)
+  print("Entering request: " .. self.params.request_number)
   local start_time = cqueues.monotime()
   local delay = math.random()*2 + 0.01
   local res
@@ -45,7 +46,6 @@ app:get("sub_request", "/sub-req", function(self)
   elseif sleep_type == "query" then
     res = db.query("select pg_sleep(?), ? as request_number; select * from pg_stat_activity", delay, self.params.request_number)
   end
-
 
   return self:html(function()
     div(function()
